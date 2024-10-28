@@ -1,11 +1,11 @@
-package dev.danae.common.commands.arguments.material;
+package dev.danae.common.commands.material;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.bukkit.Material;
 
 
-public enum MaterialFilter 
+public enum MaterialFilter
 {
   ALL,
   BLOCKS,
