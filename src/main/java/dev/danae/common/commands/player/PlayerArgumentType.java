@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class PlayerType extends ArgumentType<Player> 
+public class PlayerArgumentType extends ArgumentType<Player> 
 {
   // Return the type of the argument type
   @Override

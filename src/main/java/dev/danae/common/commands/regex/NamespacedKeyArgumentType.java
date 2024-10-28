@@ -6,10 +6,10 @@ import java.util.regex.MatchResult;
 import org.bukkit.NamespacedKey;
 
 
-public final class NamespacedKeyType extends PatternType<NamespacedKey>
+public final class NamespacedKeyArgumentType extends PatternArgumentType<NamespacedKey>
 {
   // Constructor
-  public NamespacedKeyType()
+  public NamespacedKeyArgumentType()
   {
     super("namespaced key", NAMESPACED_KEY_PATTERN);
   }

@@ -10,16 +10,24 @@ import dev.danae.common.commands.ArgumentType;
 import dev.danae.common.commands.ArgumentTypeMismatchException;
 import dev.danae.common.commands.CommandContext;
 import dev.danae.common.commands.Scanner;
-import dev.danae.common.commands.regex.PatternType;
+import dev.danae.common.commands.material.MaterialFilter;
+import dev.danae.common.commands.regex.PatternArgumentType;
 import dev.danae.common.util.Cuboid;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 
 
-public class LocationType extends PatternType<Location>
+public class LocationArgumentType extends PatternArgumentType<Location>
 {
   // The pattern for parsing a location
   private static final Pattern PATTERN = Pattern.compile("((?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)))|([a-zA-Z0-9_]{2,16})|(([@^])([a-z_][a-z0-9_]*))|(\\$([a-zA-Z0-9._-]+:[a-zA-Z0-9._\\/-]+))|(~)");
+
+  // The argument types for parsing a location
+  public static final ArgumentType<NamespacedKey> NAMESPACED_KEY_TYPE = ArgumentType.getNamespacedKey();
+  public static final ArgumentType<Player> PLAYER_ARGUMENT_TYPE = ArgumentType.getPlayer();
+  private static final ArgumentType<Material> BLOCK_ARGUMENT_TYPE = ArgumentType.getMaterial(MaterialFilter.BLOCKS);
   
 
   // The origin location for the argument type
@@ -36,7 +44,7 @@ public class LocationType extends PatternType<Location>
 
 
   // Constructor
-  public LocationType(Location origin, EnumSet<LocationFormat> allowedFormats, int blockSearchRadius, Map<NamespacedKey, Location> aliases)
+  public LocationArgumentType(Location origin, EnumSet<LocationFormat> allowedFormats, int blockSearchRadius, Map<NamespacedKey, Location> aliases)
   {
     super("location", PATTERN);
 
@@ -68,7 +76,7 @@ public class LocationType extends PatternType<Location>
     // Check for a player location
     if (this.allowedFormats.contains(LocationFormat.PLAYER) && m.group(11) != null)
     {
-      var player = ArgumentType.PLAYER.parse(m.group(11));
+      var player = PLAYER_ARGUMENT_TYPE.parse(m.group(11));
       if (player.getLocation().getWorld() != origin.getWorld())
         throw new LocationWorldMismatchException(player);
 
@@ -79,7 +87,7 @@ public class LocationType extends PatternType<Location>
     if (this.allowedFormats.contains(LocationFormat.BLOCK) && m.group(12) != null)
     {      
       var mode = m.group(13);
-      var material = ArgumentType.BLOCK_MATERIAL.parse(m.group(14));
+      var material = BLOCK_ARGUMENT_TYPE.parse(m.group(14));
       
       // Find the block
       var block = Cuboid.around(origin, this.blockSearchRadius).findNearestBlockToCenter(material);
@@ -98,7 +106,7 @@ public class LocationType extends PatternType<Location>
     // Check for an alias location
     if (this.allowedFormats.contains(LocationFormat.ALIAS) && m.group(15) != null)
     {
-      var key = ArgumentType.NAMESPACED_KEY.parse(m.group(16));
+      var key = NAMESPACED_KEY_TYPE.parse(m.group(16));
       var location = aliases.get(key);
       if (location == null)
         throw new LocationAliasNotFoundException(key);
@@ -145,15 +153,15 @@ public class LocationType extends PatternType<Location>
       // Check for a player location
       if (this.allowedFormats.contains(LocationFormat.PLAYER))
       {
-        suggestions = Stream.concat(suggestions, ArgumentType.PLAYER.suggest(context, argumentIndex));
+        suggestions = Stream.concat(suggestions, PLAYER_ARGUMENT_TYPE.suggest(context, argumentIndex));
       }
 
       // Check for a block location
       if (this.allowedFormats.contains(LocationFormat.BLOCK))
       {
-        suggestions = Stream.concat(suggestions, ArgumentType.MATERIAL.suggest(context, argumentIndex)
+        suggestions = Stream.concat(suggestions, BLOCK_ARGUMENT_TYPE.suggest(context, argumentIndex)
           .map(material -> String.format("@%s", material)));
-        suggestions = Stream.concat(suggestions, ArgumentType.MATERIAL.suggest(context, argumentIndex)
+        suggestions = Stream.concat(suggestions, BLOCK_ARGUMENT_TYPE.suggest(context, argumentIndex)
           .map(material -> String.format("^%s", material)));
       }
 

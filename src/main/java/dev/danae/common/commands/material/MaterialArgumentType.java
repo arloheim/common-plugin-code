@@ -9,14 +9,14 @@ import java.util.stream.Stream;
 import org.bukkit.Material;
 
 
-public class MaterialType extends ArgumentType<Material>
+public class MaterialArgumentType extends ArgumentType<Material>
 {
   // The material filter for the argument type
   private final MaterialFilter filter;
 
 
   // Constructor
-  public MaterialType(MaterialFilter filter)
+  public MaterialArgumentType(MaterialFilter filter)
   {
     this.filter = filter;
   }

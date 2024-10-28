@@ -6,9 +6,10 @@ import dev.danae.common.commands.ArgumentFunction;
 import dev.danae.common.commands.ArgumentType;
 import dev.danae.common.commands.ArgumentTypeMismatchException;
 import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 
 
-public abstract class PatternType<T> extends ArgumentType<T>
+public abstract class PatternArgumentType<T> extends ArgumentType<T>
 {
   // The type for the argument type
   protected final String type;
@@ -18,7 +19,7 @@ public abstract class PatternType<T> extends ArgumentType<T>
 
 
   // Constructor
-  public PatternType(String type, Pattern pattern)
+  public PatternArgumentType(String type, Pattern pattern)
   {
     this.type = type;
     this.pattern = pattern;
@@ -42,6 +43,9 @@ public abstract class PatternType<T> extends ArgumentType<T>
   {
     try
     {
+      if (pattern == null)
+        return this.parse(new DefaultMatchResult(input));
+
       var m = this.pattern.matcher(input);
       if (!m.matches())
         throw new ArgumentTypeMismatchException(this, input);
@@ -55,9 +59,9 @@ public abstract class PatternType<T> extends ArgumentType<T>
 
 
   // Return a pattern argument type using the specified match result parser
-  public static <T> PatternType<T> of(String type, Pattern pattern, ArgumentFunction<MatchResult, T> parser)
+  public static <T> PatternArgumentType<T> of(String type, Pattern pattern, ArgumentFunction<MatchResult, T> parser)
   {
-    return new PatternType<T>(type, pattern)
+    return new PatternArgumentType<T>(type, pattern)
     {
       @Override
       public T parse(MatchResult matchResult) throws ArgumentException
@@ -68,13 +72,13 @@ public abstract class PatternType<T> extends ArgumentType<T>
   }
 
   // Return a pattern argument type using the specified matcher group as function argument
-  public static <T> PatternType<T> ofGroup(String type, Pattern pattern, int group, ArgumentFunction<String, T> parser)
+  public static <T> PatternArgumentType<T> ofGroup(String type, Pattern pattern, int group, ArgumentFunction<String, T> parser)
   {
     return of(type, pattern, m -> parser.apply(m.group(group)));
   }
 
   // Return a pattern argument type using the whole match as function argument
-  public static <T> PatternType<T> ofMatch(String type, Pattern pattern, ArgumentFunction<String, T> parser)
+  public static <T> PatternArgumentType<T> ofMatch(String type, Pattern pattern, ArgumentFunction<String, T> parser)
   {
     return ofGroup(type, pattern, 0, parser);
   }

@@ -5,14 +5,14 @@ import dev.danae.common.commands.ArgumentTypeMismatchException;
 import java.util.regex.MatchResult;
 
 
-public class EnumType<T extends Enum<T>> extends PatternType<T>
+public class EnumArgumentType<E extends Enum<E>> extends PatternArgumentType<E>
 {
   // The enum type for the argument type
-  private final Class<T> enumType;
+  private final Class<E> enumType;
 
 
   // Constructor
-  public EnumType(Class<T> enumType)
+  public EnumArgumentType(Class<E> enumType)
   {
     super(String.format("%s enum", enumType.getSimpleName()), IDENTIFIER_PATTERN);
 
@@ -22,7 +22,7 @@ public class EnumType<T extends Enum<T>> extends PatternType<T>
 
   // Parse the matched argument
   @Override
-  public T parse(MatchResult m) throws ArgumentException
+  public E parse(MatchResult m) throws ArgumentException
   {
     var input = m.group();
 

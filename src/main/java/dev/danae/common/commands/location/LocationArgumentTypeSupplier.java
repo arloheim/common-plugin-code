@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 
 
-public class LocationArgumentTypeSupplier implements Supplier<LocationType>
+public class LocationArgumentTypeSupplier implements Supplier<LocationArgumentType>
 {
   // The origin location for the argument type
   private final Location origin;
@@ -62,8 +62,8 @@ public class LocationArgumentTypeSupplier implements Supplier<LocationType>
 
 
   // Get the location argument type
-  public LocationType get()
+  public LocationArgumentType get()
   {
-    return new LocationType(this.origin, this.allowedFormats, this.blockSearchRadius, this.aliases);
+    return new LocationArgumentType(this.origin, this.allowedFormats, this.blockSearchRadius, this.aliases);
   }
 }
