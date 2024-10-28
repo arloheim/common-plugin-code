@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.regex.MatchResult;
 
 
-public abstract class PatternListArgumentType<T, C extends Collection<T>> extends ArgumentType<C>
+public abstract class PatternListArgumentType<T, C> extends ArgumentType<C>
 {
   // The type for the argument type
   protected final String type;
@@ -23,22 +23,21 @@ public abstract class PatternListArgumentType<T, C extends Collection<T>> extend
   // The delimiter for the argument type
   protected final String delimiter;
 
-  // The collector for the argument type
-  protected final Collector<T, ?, C> collector;
-
 
   // Constructor
-  public PatternListArgumentType(String type, Pattern pattern, String delimiter, Collector<T, ?, C> collector)
+  public PatternListArgumentType(String type, Pattern pattern, String delimiter)
   {
     this.type = type;
     this.pattern = pattern;
     this.delimiter = delimiter;
-    this.collector = collector;
   }
 
 
   // Parse the argument component from the specified match result
   public abstract T parse(MatchResult matchResult) throws ArgumentException;
+
+  // Collect the stream of parsed components
+  public abstract C collect(Stream<T> stream);
 
 
   // Return the type of the argument type
@@ -75,31 +74,37 @@ public abstract class PatternListArgumentType<T, C extends Collection<T>> extend
       }
     }
 
-    return builder.build().collect(this.collector);
+    return this.collect(builder.build());
   }
 
 
   // Return a pattern list argument type using the specified match result parser
-  public static <T, C extends Collection<T>> PatternListArgumentType<T, C> of(String type, Pattern pattern, String delimiter, ArgumentFunction<MatchResult, T> parser, Collector<T, ?, C> collector)
+  public static <T, C> PatternListArgumentType<T, C> of(String type, Pattern pattern, String delimiter, ArgumentFunction<MatchResult, T> parser, Collector<T, ?, C> collector)
   {
-    return new PatternListArgumentType<T, C>(type, pattern, delimiter, collector)
+    return new PatternListArgumentType<T, C>(type, pattern, delimiter)
     {
       @Override
       public T parse(MatchResult matchResult) throws ArgumentException
       {
         return parser.apply(matchResult);
       }
+
+      @Override
+      public C collect(Stream<T> stream)
+      {
+        return stream.collect(collector);
+      }
     };
   }
 
   // Return a pattern list argument type using the specified matcher group as function argument
-  public static <T, C extends Collection<T>> PatternListArgumentType<T, C> ofGroup(String type, Pattern pattern, String delimiter, int group, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
+  public static <T, C> PatternListArgumentType<T, C> ofGroup(String type, Pattern pattern, String delimiter, int group, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
   {
     return of(type, pattern, delimiter, m -> parser.apply(m.group(group)), collector);
   }
 
   // Return a pattern list argument type using the whole match as function argument
-  public static <T, C extends Collection<T>> PatternListArgumentType<T, C> ofMatch(String type, Pattern pattern, String delimiter, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
+  public static <T, C> PatternListArgumentType<T, C> ofMatch(String type, Pattern pattern, String delimiter, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
   {
     return ofGroup(type, pattern, delimiter, 0, parser, collector);
   }
