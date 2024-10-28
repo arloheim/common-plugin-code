@@ -5,6 +5,8 @@ import dev.danae.common.commands.ArgumentTypeMismatchException;
 import java.util.EnumSet;
 import java.util.regex.MatchResult;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.checkerframework.checker.units.qual.C;
 
 
 public class EnumSetArgumentType<E extends Enum<E>> extends PatternListArgumentType<E, EnumSet<E>>
@@ -16,7 +18,7 @@ public class EnumSetArgumentType<E extends Enum<E>> extends PatternListArgumentT
   // Constructor
   public EnumSetArgumentType(Class<E> enumType, String delimiter)
   {
-    super(String.format("%s enum", enumType.getSimpleName()), IDENTIFIER_PATTERN, delimiter, Collectors.toCollection(() -> EnumSet.noneOf(enumType)));
+    super(String.format("%s enum", enumType.getSimpleName()), IDENTIFIER_PATTERN, delimiter);
 
     this.enumType = enumType;
   }
@@ -36,5 +38,12 @@ public class EnumSetArgumentType<E extends Enum<E>> extends PatternListArgumentT
     {
       throw new ArgumentTypeMismatchException(this, input);
     }
+  }
+
+  // Collect the stream of parsed components
+  @Override
+  public EnumSet<E> collect(Stream<E> stream)
+  {
+    return stream.collect(Collectors.toCollection(() -> EnumSet.noneOf(enumType)));
   }
 }
