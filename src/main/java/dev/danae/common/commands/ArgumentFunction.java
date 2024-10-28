@@ -2,8 +2,8 @@ package dev.danae.common.commands;
 
 
 @FunctionalInterface
-public interface ArgumentFunction<T, U> 
+public interface ArgumentFunction<T, R> 
 {
   // Apply the function to the specified argument
-  public U apply(T t) throws ArgumentException;
+  public R apply(T t) throws ArgumentException;
 }

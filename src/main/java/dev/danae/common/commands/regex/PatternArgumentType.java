@@ -1,6 +1,7 @@
 package dev.danae.common.commands.regex;
 
 import java.util.regex.Pattern;
+import dev.danae.common.commands.ArgumentBiFunction;
 import dev.danae.common.commands.ArgumentException;
 import dev.danae.common.commands.ArgumentFunction;
 import dev.danae.common.commands.ArgumentType;
@@ -59,26 +60,26 @@ public abstract class PatternArgumentType<T> extends ArgumentType<T>
 
 
   // Return a pattern argument type using the specified match result parser
-  public static <T> PatternArgumentType<T> of(String type, Pattern pattern, ArgumentFunction<MatchResult, T> parser)
+  public static <T> PatternArgumentType<T> of(String type, Pattern pattern, ArgumentBiFunction<MatchResult, ArgumentType<T>, T> parser)
   {
     return new PatternArgumentType<T>(type, pattern)
     {
       @Override
       public T parse(MatchResult matchResult) throws ArgumentException
       {
-        return parser.apply(matchResult);
+        return parser.apply(matchResult, this);
       }
     };
   }
 
-  // Return a pattern argument type using the specified matcher group as function argument
-  public static <T> PatternArgumentType<T> ofGroup(String type, Pattern pattern, int group, ArgumentFunction<String, T> parser)
+  // Return a pattern argument type using the specified matcher group as argument
+  public static <T> PatternArgumentType<T> ofGroup(String type, Pattern pattern, int group, ArgumentBiFunction<String, ArgumentType<T>, T> parser)
   {
-    return of(type, pattern, m -> parser.apply(m.group(group)));
+    return of(type, pattern, (m, t) -> parser.apply(m.group(group), t));
   }
 
-  // Return a pattern argument type using the whole match as function argument
-  public static <T> PatternArgumentType<T> ofMatch(String type, Pattern pattern, ArgumentFunction<String, T> parser)
+  // Return a pattern argument type using the whole match as argument
+  public static <T> PatternArgumentType<T> ofMatch(String type, Pattern pattern, ArgumentBiFunction<String, ArgumentType<T>, T> parser)
   {
     return ofGroup(type, pattern, 0, parser);
   }

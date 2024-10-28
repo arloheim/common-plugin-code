@@ -10,7 +10,10 @@ import dev.danae.common.commands.ArgumentType;
 import dev.danae.common.commands.ArgumentTypeMismatchException;
 import dev.danae.common.commands.CommandContext;
 import dev.danae.common.commands.Scanner;
+import dev.danae.common.commands.material.MaterialArgumentType;
 import dev.danae.common.commands.material.MaterialFilter;
+import dev.danae.common.commands.player.PlayerArgumentType;
+import dev.danae.common.commands.regex.NamespacedKeyArgumentType;
 import dev.danae.common.commands.regex.PatternArgumentType;
 import dev.danae.common.util.Cuboid;
 import org.bukkit.Location;
@@ -25,9 +28,8 @@ public class LocationArgumentType extends PatternArgumentType<Location>
   private static final Pattern PATTERN = Pattern.compile("((?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)))|([a-zA-Z0-9_]{2,16})|(([@^])([a-z_][a-z0-9_]*))|(\\$([a-zA-Z0-9._-]+:[a-zA-Z0-9._\\/-]+))|(~)");
 
   // The argument types for parsing a location
-  public static final ArgumentType<NamespacedKey> NAMESPACED_KEY_TYPE = ArgumentType.getNamespacedKey();
-  public static final ArgumentType<Player> PLAYER_ARGUMENT_TYPE = ArgumentType.getPlayer();
-  private static final ArgumentType<Material> BLOCK_ARGUMENT_TYPE = ArgumentType.getMaterial(MaterialFilter.BLOCKS);
+  public static final ArgumentType<Player> PLAYER_ARGUMENT_TYPE = new PlayerArgumentType();
+  private static final ArgumentType<Material> BLOCK_ARGUMENT_TYPE = new MaterialArgumentType(MaterialFilter.BLOCKS);
   
 
   // The origin location for the argument type
@@ -43,6 +45,10 @@ public class LocationArgumentType extends PatternArgumentType<Location>
   private final Map<NamespacedKey, Location> aliases;
 
 
+  // The alias argument type for the argument type
+  private final ArgumentType<NamespacedKey> aliasArgumentType;
+
+
   // Constructor
   public LocationArgumentType(Location origin, EnumSet<LocationFormat> allowedFormats, int blockSearchRadius, Map<NamespacedKey, Location> aliases)
   {
@@ -52,6 +58,9 @@ public class LocationArgumentType extends PatternArgumentType<Location>
     this.allowedFormats = allowedFormats;
     this.blockSearchRadius = blockSearchRadius;
     this.aliases = aliases;
+
+    this.aliasArgumentType = new NamespacedKeyArgumentType(this.aliases.keySet().stream()
+      .map(key -> key.toString()));
   }
 
 
@@ -106,7 +115,7 @@ public class LocationArgumentType extends PatternArgumentType<Location>
     // Check for an alias location
     if (this.allowedFormats.contains(LocationFormat.ALIAS) && m.group(15) != null)
     {
-      var key = NAMESPACED_KEY_TYPE.parse(m.group(16));
+      var key = this.aliasArgumentType.parse(m.group(16));
       var location = aliases.get(key);
       if (location == null)
         throw new LocationAliasNotFoundException(key);
@@ -168,8 +177,8 @@ public class LocationArgumentType extends PatternArgumentType<Location>
       // Check for an alias location
       if (this.allowedFormats.contains(LocationFormat.ALIAS))
       {
-        suggestions = Stream.concat(suggestions, this.aliases.keySet().stream()
-          .map(alias -> String.format("$%s", alias)));
+        suggestions = Stream.concat(suggestions, this.aliasArgumentType.suggest(context, argumentIndex)
+        .map(material -> String.format("$%s", material)));
       }
     }
   

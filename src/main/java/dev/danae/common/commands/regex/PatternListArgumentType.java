@@ -3,6 +3,7 @@ package dev.danae.common.commands.regex;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+import dev.danae.common.commands.ArgumentBiFunction;
 import dev.danae.common.commands.ArgumentException;
 import dev.danae.common.commands.ArgumentFunction;
 import dev.danae.common.commands.ArgumentType;
@@ -77,16 +78,15 @@ public abstract class PatternListArgumentType<T, C> extends ArgumentType<C>
     return this.collect(builder.build());
   }
 
-
   // Return a pattern list argument type using the specified match result parser
-  public static <T, C> PatternListArgumentType<T, C> of(String type, Pattern pattern, String delimiter, ArgumentFunction<MatchResult, T> parser, Collector<T, ?, C> collector)
+  public static <T, C> PatternListArgumentType<T, C> of(String type, Pattern pattern, String delimiter, ArgumentBiFunction<MatchResult, ArgumentType<C>, T> parser, Collector<T, ?, C> collector)
   {
     return new PatternListArgumentType<T, C>(type, pattern, delimiter)
     {
       @Override
       public T parse(MatchResult matchResult) throws ArgumentException
       {
-        return parser.apply(matchResult);
+        return parser.apply(matchResult, this);
       }
 
       @Override
@@ -97,14 +97,14 @@ public abstract class PatternListArgumentType<T, C> extends ArgumentType<C>
     };
   }
 
-  // Return a pattern list argument type using the specified matcher group as function argument
-  public static <T, C> PatternListArgumentType<T, C> ofGroup(String type, Pattern pattern, String delimiter, int group, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
+  // Return a pattern list argument type using the specified matcher group as argument
+  public static <T, C> PatternListArgumentType<T, C> ofGroup(String type, Pattern pattern, String delimiter, int group, ArgumentBiFunction<String, ArgumentType<C>, T> parser, Collector<T, ?, C> collector)
   {
-    return of(type, pattern, delimiter, m -> parser.apply(m.group(group)), collector);
+    return of(type, pattern, delimiter, (m, t) -> parser.apply(m.group(group), t), collector);
   }
 
-  // Return a pattern list argument type using the whole match as function argument
-  public static <T, C> PatternListArgumentType<T, C> ofMatch(String type, Pattern pattern, String delimiter, ArgumentFunction<String, T> parser, Collector<T, ?, C> collector)
+  // Return a pattern list argument type using the whole match as argument
+  public static <T, C> PatternListArgumentType<T, C> ofMatch(String type, Pattern pattern, String delimiter, ArgumentBiFunction<String, ArgumentType<C>, T> parser, Collector<T, ?, C> collector)
   {
     return ofGroup(type, pattern, delimiter, 0, parser, collector);
   }
