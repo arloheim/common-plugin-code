@@ -1,5 +1,6 @@
 package dev.danae.common.commands.arguments;
 
+import dev.danae.common.commands.Suggestion;
 import java.util.Arrays;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -20,6 +21,9 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
 
   // Collect the stream of parsed values
   public abstract C collect(Stream<T> stream);
+
+  // Return suggestions for the specified string part
+  public abstract Stream<String> suggestFromStringPart(String input);
 
 
   // Parse an argument from the specified string
@@ -49,6 +53,17 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
     }
 
     return this.collect(builder.build());
+  }
+
+  // Return suggestions for the specified string
+  public default Stream<String> suggestFromString(String input)
+  {
+    var lastDelimiterIndex = input.lastIndexOf(this.getDelimiter());
+    var lastParts = lastDelimiterIndex > -1 ? input.substring(0, lastDelimiterIndex) : "";
+    var currentPart = input.substring(lastParts.length());
+
+    return this.suggestFromStringPart(currentPart)
+      .map(s -> lastParts + s);
   }
 
 
@@ -94,9 +109,9 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
       }
 
       @Override
-      public Stream<String> suggestFromString(String input)
+      public Stream<String> suggestFromStringPart(String input)
       {
-        return suggestions;
+        return Suggestion.find(input, suggestions);
       }
     };
   }

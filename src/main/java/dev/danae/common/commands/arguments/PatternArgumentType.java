@@ -2,6 +2,7 @@ package dev.danae.common.commands.arguments;
 
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import dev.danae.common.commands.Suggestion;
 import java.util.regex.MatchResult;
 
 
@@ -66,7 +67,7 @@ public interface PatternArgumentType<T> extends StringArgumentType<T>
       @Override
       public Stream<String> suggestFromString(String input)
       {
-        return suggestions;
+        return Suggestion.find(input, suggestions);
       }
     };
   }

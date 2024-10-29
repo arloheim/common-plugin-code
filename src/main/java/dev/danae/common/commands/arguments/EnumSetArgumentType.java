@@ -78,16 +78,11 @@ final class EnumSetArgumentType<E extends Enum<E>> implements PatternListArgumen
     return stream.collect(Collectors.toCollection(() -> EnumSet.noneOf(type)));
   }
 
-  // Return suggestions for the specified string
+  // Return suggestions for the specified string part
   @Override
-  public Stream<String> suggestFromString(String input)
+  public Stream<String> suggestFromStringPart(String input)
   {
-    var lastDelimiterIndex = input.lastIndexOf(this.delimiter);
-    var lastInput = lastDelimiterIndex > -1 ? input.substring(0, lastDelimiterIndex) : "";
-    var newInput = input.substring(lastInput.length());
-
-    return Suggestion.find(newInput, Arrays.stream(this.type.getEnumConstants())
-      .map(e -> e.name().toLowerCase()))
-      .map(s -> lastInput + s);
+    return Suggestion.find(input, Arrays.stream(this.type.getEnumConstants())
+      .map(e -> e.name().toLowerCase()));
   }
 }
