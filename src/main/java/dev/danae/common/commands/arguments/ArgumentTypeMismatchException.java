@@ -1,4 +1,4 @@
-package dev.danae.common.commands;
+package dev.danae.common.commands.arguments;
 
 
 public class ArgumentTypeMismatchException extends ArgumentException
@@ -17,7 +17,7 @@ public class ArgumentTypeMismatchException extends ArgumentException
   // Constructor for an expected type, actual value and cause
   public ArgumentTypeMismatchException(ArgumentType<?> expectedType, String actualValue, Throwable cause)
   {
-    super(String.format(MESSAGE_FORMAT, expectedType.getType(), actualValue), cause);
+    super(String.format(MESSAGE_FORMAT, expectedType.getTypeName(), actualValue), cause);
 
     this.expectedType = expectedType;
     this.actualValue = actualValue;
@@ -26,7 +26,7 @@ public class ArgumentTypeMismatchException extends ArgumentException
   // Constructor for an expected type and actual value
   public ArgumentTypeMismatchException(ArgumentType<?> expectedType, String actualValue)
   {
-    super(String.format(MESSAGE_FORMAT, expectedType.getType(), actualValue));
+    super(String.format(MESSAGE_FORMAT, expectedType.getTypeName(), actualValue));
 
     this.expectedType = expectedType;
     this.actualValue = actualValue;

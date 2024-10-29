@@ -1,15 +1,11 @@
-package dev.danae.common.commands.material;
+package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.ArgumentException;
-import dev.danae.common.commands.ArgumentType;
-import dev.danae.common.commands.ArgumentTypeMismatchException;
-import dev.danae.common.commands.CommandContext;
 import dev.danae.common.commands.Suggestion;
 import java.util.stream.Stream;
 import org.bukkit.Material;
 
 
-public class MaterialArgumentType extends ArgumentType<Material>
+final class MaterialArgumentType implements StringArgumentType<Material>
 {
   // The material filter for the argument type
   private final MaterialFilter filter;
@@ -24,14 +20,21 @@ public class MaterialArgumentType extends ArgumentType<Material>
 
   // Return the type of the argument type
   @Override
-  public String getType()
+  public Class<Material> getType()
+  {
+    return Material.class;
+  }
+  
+  // Return the type name for the argyment type
+  @Override
+  public String getTypeName()
   {
     return "material";
   }
 
   // Parse a material from the specified string
   @Override
-  public Material parse(String input) throws ArgumentException
+  public Material parseFromString(String input) throws ArgumentException
   {    
     var material = Material.matchMaterial(input);
     if (material == null)
@@ -41,11 +44,11 @@ public class MaterialArgumentType extends ArgumentType<Material>
     return material;
   }
 
-  // Return suggestions for the specified input
+  // Return suggestions for the specified string
   @Override
-  public Stream<String> suggest(CommandContext context, int argumentIndex)
+  public Stream<String> suggestFromString(String input)
   {
-    return Suggestion.find(context.getArgument(argumentIndex), this.filter.stream()
+    return Suggestion.find(input, this.filter.stream()
       .map(material -> material.name().toLowerCase()));
   }
 }

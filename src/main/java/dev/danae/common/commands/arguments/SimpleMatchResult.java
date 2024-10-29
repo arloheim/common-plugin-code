@@ -1,16 +1,16 @@
-package dev.danae.common.commands.regex;
+package dev.danae.common.commands.arguments;
 
 import java.util.regex.MatchResult;
 
 
-class DefaultMatchResult implements MatchResult 
+final class SimpleMatchResult implements MatchResult 
 {
   // The text of the match result
   private final String text;
 
 
   // Constructor
-  public DefaultMatchResult(String text)
+  public SimpleMatchResult(String text)
   {
     this.text = text;
   }

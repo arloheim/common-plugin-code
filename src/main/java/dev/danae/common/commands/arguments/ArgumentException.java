@@ -1,5 +1,6 @@
-package dev.danae.common.commands;
+package dev.danae.common.commands.arguments;
 
+import dev.danae.common.commands.CommandException;
 
 public class ArgumentException extends CommandException
 {

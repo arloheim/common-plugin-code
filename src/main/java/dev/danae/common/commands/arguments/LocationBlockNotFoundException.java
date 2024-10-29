@@ -1,6 +1,5 @@
-package dev.danae.common.commands.location;
+package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.ArgumentException;
 import org.bukkit.Material;
 
 

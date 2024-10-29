@@ -1,4 +1,4 @@
-package dev.danae.common.commands;
+package dev.danae.common.commands.arguments;
 
 
 @FunctionalInterface

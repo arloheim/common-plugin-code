@@ -1,4 +1,4 @@
-package dev.danae.common.commands.location;
+package dev.danae.common.commands.arguments;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 
 
-public class LocationArgumentTypeSupplier implements Supplier<LocationArgumentType>
+public final class LocationArgumentTypeSupplier implements Supplier<ArgumentType<Location>>
 {
   // The origin location for the argument type
   private final Location origin;
@@ -39,7 +39,7 @@ public class LocationArgumentTypeSupplier implements Supplier<LocationArgumentTy
     return this;
   }
 
-  //Remove the allowed formats from the supplier
+  // Remove the allowed formats from the supplier
   public LocationArgumentTypeSupplier withoutAllowedFormats(LocationFormat... allowedFormats)
   {
     this.allowedFormats.removeAll(Arrays.asList(allowedFormats));
@@ -62,7 +62,7 @@ public class LocationArgumentTypeSupplier implements Supplier<LocationArgumentTy
 
 
   // Get the location argument type
-  public LocationArgumentType get()
+  public ArgumentType<Location> get()
   {
     return new LocationArgumentType(this.origin, this.allowedFormats, this.blockSearchRadius, this.aliases);
   }

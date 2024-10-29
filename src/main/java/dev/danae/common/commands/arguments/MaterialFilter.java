@@ -1,4 +1,4 @@
-package dev.danae.common.commands.material;
+package dev.danae.common.commands.arguments;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

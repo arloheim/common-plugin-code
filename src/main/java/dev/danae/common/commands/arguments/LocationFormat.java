@@ -1,4 +1,4 @@
-package dev.danae.common.commands.location;
+package dev.danae.common.commands.arguments;
 
 public enum LocationFormat
 {

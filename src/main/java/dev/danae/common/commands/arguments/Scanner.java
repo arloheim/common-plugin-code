@@ -1,5 +1,8 @@
-package dev.danae.common.commands;
+package dev.danae.common.commands.arguments;
 
+import java.util.function.Predicate;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +40,12 @@ public class Scanner
   public String current()
   {
     return this.index >= 0  ? this.arguments[this.index] : null;
+  }
+
+  // Return the token that will be scanned next
+  public String peek()
+  {
+    return !this.isAtEnd() ? this.arguments[this.index + 1] : null;
   }
 
   
@@ -160,5 +169,49 @@ public class Scanner
       this.index = previousIndex;
       throw ex;
     }
+  }
+
+
+  // Check if the next token matches the predicate
+  public boolean check(Predicate<String> predicate)
+  {
+    return !this.isAtEnd() && predicate.test(this.peek());
+  }
+  
+  // Check if the next token matches the pattern
+  public MatchResult check(Pattern pattern)
+  {
+    if (this.isAtEnd())
+      return null;
+    
+    var matcher = pattern.matcher(this.peek());
+    return matcher.matches() ? matcher.toMatchResult() : null;
+  }
+  
+  // Check if the next token matches the predicate and advance if so
+  public boolean match(Predicate<String> predicate, String expectedType) throws ArgumentException
+  {
+    var result = this.check(predicate);
+    if (result)
+      this.take(expectedType);
+    return result;
+  }
+  
+  // Check if the next token matches the pattern and advance if so
+  public MatchResult match(Pattern pattern, String expectedType) throws ArgumentException
+  {
+    var result = this.check(pattern);
+    if (result != null)
+      this.take(expectedType);
+    return result;
+  }
+  
+  // Advance the index while the next token matches the predicate
+  public String matchWhile(Predicate<String> predicate, String expectedType) throws ArgumentException
+  {
+    var string = "";
+    while (this.check(predicate))
+      string += (!string.isBlank() ? " " : "") + this.take(expectedType);
+    return string;
   }
 }

@@ -3,6 +3,7 @@ package dev.danae.common.commands;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import dev.danae.common.commands.arguments.Scanner;
 import dev.danae.common.util.Cuboid;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
