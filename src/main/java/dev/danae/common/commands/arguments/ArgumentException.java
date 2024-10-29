@@ -2,6 +2,7 @@ package dev.danae.common.commands.arguments;
 
 import dev.danae.common.commands.CommandException;
 
+
 public class ArgumentException extends CommandException
 {
   // Constructor for a message and cause

@@ -8,32 +8,20 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 
-public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
+public interface PatternListArgumentType<T, C> extends StringListArgumentType<C>
 {
   // Return the pattern for the argument type
   public Pattern getPattern();
 
-  // Return the delimiter for the argument type
-  public String getDelimiter();
+  // Return the collector for the argument type
+  public Collector<T, ?, C> getCollector();
 
   // Parse an argument from the specified match result
   public abstract T parseFromMatchResult(MatchResult matchResult) throws ArgumentException;
-
-  // Collect the stream of parsed values
-  public abstract C collect(Stream<T> stream);
-
-  // Return suggestions for the specified string part
-  public abstract Stream<String> suggestFromStringPart(String input);
-
-
-  // Parse an argument from the specified string
-  public default C parseFromString(String input) throws ArgumentException
-  {
-    return this.parseStringList(Arrays.asList(input.split(this.getDelimiter())));
-  }
+  
 
   // Parse the argument from the specified iterable of strings
-  public default C parseStringList(Iterable<String> inputs) throws ArgumentException
+  public default C parseFromStringList(Iterable<String> inputs) throws ArgumentException
   {
     Stream.Builder<T> builder = Stream.builder();
 
@@ -52,18 +40,7 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
       }
     }
 
-    return this.collect(builder.build());
-  }
-
-  // Return suggestions for the specified string
-  public default Stream<String> suggestFromString(String input)
-  {
-    var lastDelimiterIndex = input.lastIndexOf(this.getDelimiter());
-    var lastParts = lastDelimiterIndex > -1 ? input.substring(0, lastDelimiterIndex) : "";
-    var currentPart = input.substring(lastParts.length());
-
-    return this.suggestFromStringPart(currentPart)
-      .map(s -> lastParts + s);
+    return builder.build().collect(this.getCollector());
   }
 
 
@@ -91,6 +68,12 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
       }
 
       @Override
+      public Collector<T, ?, C> getCollector()
+      {
+        return collector;
+      }
+
+      @Override
       public String getDelimiter()
       {
         return delimiter;
@@ -103,13 +86,7 @@ public interface PatternListArgumentType<T, C> extends StringArgumentType<C>
       }
 
       @Override
-      public C collect(Stream<T> stream)
-      {
-        return stream.collect(collector);
-      }
-
-      @Override
-      public Stream<String> suggestFromStringPart(String input)
+      public Stream<String> suggestFromStringList(String input)
       {
         return Suggestion.find(input, suggestions);
       }

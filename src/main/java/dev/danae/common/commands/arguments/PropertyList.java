@@ -29,6 +29,7 @@ public final class PropertyList
   }
 
   // Return the property with the specified name
+  @SuppressWarnings("unchecked")
   public <T> T get(String name, ArgumentType<T> type) throws ArgumentException
   {
     if (!this.properties.containsKey(name))

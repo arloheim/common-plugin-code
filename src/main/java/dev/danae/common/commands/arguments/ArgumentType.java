@@ -127,7 +127,7 @@ public interface ArgumentType<T>
   }
 
   // Return an enum setargument type
-  public static <E extends Enum<E>> StringArgumentType<EnumSet<E>> getEnumSetArgumentType(Class<E> enumType, String delimiter)
+  public static <E extends Enum<E>> StringListArgumentType<EnumSet<E>> getEnumSetArgumentType(Class<E> enumType, String delimiter)
   {
     return new EnumSetArgumentType<>(enumType, delimiter);
   }

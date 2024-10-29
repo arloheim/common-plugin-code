@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,6 +49,13 @@ final class EnumSetArgumentType<E extends Enum<E>> implements PatternListArgumen
     return IDENTIFIER_PATTERN;
   }
 
+  // Return the collector for the argument type
+  @Override
+  public Collector<E, ?, EnumSet<E>> getCollector()
+  {
+    return Collectors.toCollection(() -> EnumSet.noneOf(type));
+  }
+
   // Return the delimiter for the argument type
   @Override
   public String getDelimiter()
@@ -71,16 +79,9 @@ final class EnumSetArgumentType<E extends Enum<E>> implements PatternListArgumen
     }
   }
 
-  // Collect the stream of parsed values
-  @Override
-  public EnumSet<E> collect(Stream<E> stream)
-  {
-    return stream.collect(Collectors.toCollection(() -> EnumSet.noneOf(type)));
-  }
-
   // Return suggestions for the specified string part
   @Override
-  public Stream<String> suggestFromStringPart(String input)
+  public Stream<String> suggestFromStringList(String input)
   {
     return Suggestion.find(input, Arrays.stream(this.type.getEnumConstants())
       .map(e -> e.name().toLowerCase()));
