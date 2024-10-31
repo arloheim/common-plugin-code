@@ -2,10 +2,9 @@ package dev.danae.common.messages;
 
 import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.java.JavaPlugin;
 
 
-public interface ConfigurationMessageManager<P extends JavaPlugin> extends MessageManager
+public interface ConfigurationMessageManager extends MessageManager
 {
   // Return the messages of the plugin
   public Map<String, String> getMessages();
