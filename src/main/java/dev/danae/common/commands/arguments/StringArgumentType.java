@@ -21,6 +21,6 @@ public interface StringArgumentType<T> extends ArgumentType<T>
   // Return suggestions for the specified command context and argument
   public default Stream<String> suggest(CommandContext context, int argumentIndex)
   {
-    return this.suggestFromString(context.getArgument(argumentIndex + 1));
+    return this.suggestFromString(context.getArgument(argumentIndex));
   }
 }

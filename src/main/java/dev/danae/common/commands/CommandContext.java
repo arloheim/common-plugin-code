@@ -3,6 +3,7 @@ package dev.danae.common.commands;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import net.kyori.adventure.text.Component;
 import dev.danae.common.commands.arguments.Scanner;
 import dev.danae.common.util.Cuboid;
 import org.bukkit.GameMode;
@@ -221,6 +222,12 @@ public class CommandContext
   
   
   // Send a message to the sender of the command
+  public void sendMessage(Component message)
+  {
+    this.sender.sendMessage(message);
+  }
+  
+  // Send a string message to the sender of the command
   public void sendMessage(String message)
   {
     this.sender.sendMessage(message);
