@@ -10,6 +10,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 
 public abstract class Command implements CommandExecutor, TabCompleter, Listener
@@ -40,6 +41,12 @@ public abstract class Command implements CommandExecutor, TabCompleter, Listener
     
     // Set the command listener
     this.publishEvents(plugin);
+  }
+
+  // Register the command handler to the plugin command with the specified name
+  public void publishCommandHandler(JavaPlugin plugin, String pluginCommandName)
+  {
+    this.publishCommandHandler(plugin, plugin.getCommand(pluginCommandName));
   }
   
   // Register the command handler as a listener for the specified plugin

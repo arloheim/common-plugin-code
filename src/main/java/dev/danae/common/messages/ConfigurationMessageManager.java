@@ -1,12 +1,11 @@
-package dev.danae.common.plugin;
+package dev.danae.common.messages;
 
 import java.util.Map;
-import dev.danae.common.messages.MessageManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public interface PluginMessageManager<P extends JavaPlugin> extends PluginComponent<P>, MessageManager
+public interface ConfigurationMessageManager<P extends JavaPlugin> extends MessageManager
 {
   // Return the messages of the plugin
   public Map<String, String> getMessages();
@@ -31,11 +30,5 @@ public interface PluginMessageManager<P extends JavaPlugin> extends PluginCompon
         this.getMessages().put(name, message);
       }
     }
-  }
-
-  // Load the messages from the configuration section with the specified name in the plugin
-  public default void loadMessagesFromConfiguration(String sectionPath)
-  {
-    this.loadMessagesFromConfiguration(this.getPlugin().getConfig().getConfigurationSection(sectionPath));
   }
 }
