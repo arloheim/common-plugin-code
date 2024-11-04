@@ -3,6 +3,7 @@ package dev.danae.common.commands;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -59,8 +60,8 @@ public abstract class Command implements CommandExecutor, TabCompleter, Listener
   // Handle the command
   public abstract void handle(CommandContext context) throws CommandException, CommandUsageException;
   
-  // Handle tab completion of the command
-  public abstract List<String> handleTabCompletion(CommandContext context);
+  // Return suggestions for the specified command context
+  public abstract Stream<String> suggest(CommandContext context);
   
   
   // Event handler for a command event
@@ -91,6 +92,6 @@ public abstract class Command implements CommandExecutor, TabCompleter, Listener
   public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args)
   {
     var context = new CommandContext(command, args, sender);
-    return this.handleTabCompletion(context);
+    return this.suggest(context).toList();
   }
 }

@@ -1,9 +1,8 @@
 package dev.danae.common.commands;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.bukkit.plugin.Plugin;
 
 
@@ -99,7 +98,7 @@ public class CommandGroup extends Command
   
   // Handle tab completion of the command
   @Override
-  public List<String> handleTabCompletion(CommandContext context)
+  public Stream<String> suggest(CommandContext context)
   {
     // Check if the arguments provide a subcommand
     if (!context.hasAtLeastArgumentsCount(1))
@@ -110,18 +109,15 @@ public class CommandGroup extends Command
     {
       var arg = context.getArgument(0);
       
-      // Create the list of the subcommands
-      var list = new ArrayList<String>(this.subcommands.keySet().stream().sorted().toList());
+      // Create the stream of the subcommands
+      var stream = this.subcommands.keySet().stream();
 
       // Add the tab completion for the empty subcommand if applicable
       if (this.emptySubcommand != null)
-        list.addAll(this.emptySubcommand.handleTabCompletion(context));
+        stream = Stream.concat(stream, this.emptySubcommand.suggest(context));
 
-      // Filter the list based on the argument
-      if (!arg.isEmpty())
-        return list.stream().filter(s -> s.startsWith(arg)).toList();
-      else
-        return list;
+      // Filter the stream based on the argument
+      return Suggestion.find(arg, stream);
     }
       
     // Otherwise, check if there is a subcommand that matches and delegate to that
@@ -129,7 +125,7 @@ public class CommandGroup extends Command
     if (handler == null)
       return null;
     
-    return handler.handleTabCompletion(context.withSlicedArguments(1));
+    return handler.suggest(context.withSlicedArguments(1));
   }
   
   // Register the command handler as a listener for the specified plugin
