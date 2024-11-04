@@ -151,15 +151,15 @@ public interface ArgumentType<T>
   }
 
 
-  // Return a location argument type supplier
-  public static LocationArgumentTypeSupplier getLocationArgumentTypeSupplier(Location origin)
+  // Return a location argument type builder
+  public static LocationArgumentTypeBuilder getLocationArgumentTypeBuilder()
   {
-    return new LocationArgumentTypeSupplier(origin);
+    return new LocationArgumentTypeBuilder();
   }
 
-  // Return a property list argument type supplier
-  public static PropertyListArgumentTypeSupplier getPropertyListArgumentTypeSupplier()
+  // Return a property list argument type builder
+  public static PropertyListArgumentTypeBuilder getPropertyListArgumentTypeBuilder()
   {
-    return new PropertyListArgumentTypeSupplier();
+    return new PropertyListArgumentTypeBuilder();
   }
 }
