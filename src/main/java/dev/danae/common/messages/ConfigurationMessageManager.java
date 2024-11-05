@@ -38,15 +38,23 @@ public interface ConfigurationMessageManager extends MessageManager
   }
 
   // Load the messages from the specified configuration file
-  public default void loadMessagesFromConfiguration(File file, Map<String, String> defaultMessages) throws FileNotFoundException, IOException, InvalidConfigurationException
+  public default void loadMessagesFromConfiguration(File file, Map<String, String> defaultMessages)
   {
-    var configuration = new YamlConfiguration();
-    configuration.load(file);
-    this.loadMessagesFromConfiguration(configuration, defaultMessages);
+    try
+    {
+      var configuration = new YamlConfiguration();
+      configuration.load(file);
+      this.loadMessagesFromConfiguration(configuration, defaultMessages);
+    }
+    catch (IOException | InvalidConfigurationException ex)
+    {
+      this.getMessages().clear();
+      this.getMessages().putAll(defaultMessages);
+    }
   }
   
   // Load the messages from the specified configuration file in the plugin data folder
-  public default void loadMessagesFromConfiguration(Plugin plugin, String file, Map<String, String> defaultMessages) throws FileNotFoundException, IOException, InvalidConfigurationException
+  public default void loadMessagesFromConfiguration(Plugin plugin, String file, Map<String, String> defaultMessages)
   {
     this.loadMessagesFromConfiguration(new File(plugin.getDataFolder(), file), defaultMessages);
   }
