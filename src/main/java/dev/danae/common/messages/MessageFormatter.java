@@ -11,7 +11,7 @@ public interface MessageFormatter
 
 
   // Format the specified message to a component
-  public default Component formatMessage(String message)
+  public default Component format(String message)
   {
     return this.format(message, Map.of());
   }
