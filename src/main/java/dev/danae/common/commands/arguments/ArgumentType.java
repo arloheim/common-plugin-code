@@ -33,7 +33,7 @@ public interface ArgumentType<T>
   public Stream<String> suggest(CommandContext context, int argumentIndex);
   
 
-  // // Parse an argument from the specified scanner, or return the default value if parsing fails
+  // Parse an argument from the specified scanner, or return the default value if parsing fails
   public default T parse(Scanner scanner, T defaultValue) throws ArgumentException
   {
     try
