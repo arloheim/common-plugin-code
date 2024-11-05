@@ -33,7 +33,7 @@ public final class PropertyList
   public <T> T get(String name, ArgumentType<T> type) throws ArgumentException
   {
     if (!this.properties.containsKey(name))
-      throw new ArgumentException(String.format("Undefined property \"%s\""));
+      throw new ArgumentException(String.format("Undefined property \"%s\"", type.getTypeName()));
 
     var value = this.properties.get(name);
     if (!value.getClass().isAssignableFrom(type.getType()))
