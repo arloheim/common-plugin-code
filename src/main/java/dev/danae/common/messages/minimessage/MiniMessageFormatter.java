@@ -32,6 +32,20 @@ public class MiniMessageFormatter implements MessageFormatter
     this.customResolvers.put(type, resolver);
     return this;
   }
+  
+  // Add the specified custom resolver to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ComponentFactory<T> resolver)
+  {
+    this.customResolvers.put(type, resolver);
+    return this;
+  }
+  
+  // Add the specified custom resolver to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ContextualComponentFactory<T> resolver)
+  {
+    this.customResolvers.put(type, resolver);
+    return this;
+  }
 
   // Add the specified custom resolver to the formatter
   public <T> MiniMessageFormatter unregisterCustomResolver(Class<T> type)
