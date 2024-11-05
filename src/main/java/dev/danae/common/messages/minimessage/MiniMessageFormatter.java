@@ -6,6 +6,7 @@ import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -26,24 +27,31 @@ public class MiniMessageFormatter implements MessageFormatter
   }
 
 
-  // Add the specified custom resolver to the formatter
-  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, TagResolverFactory<T> resolver)
+  // Add the specified custom resolver factory to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, TagResolverFactory<T> tagResolverFactory)
   {
-    this.customResolvers.put(type, resolver);
+    this.customResolvers.put(type, tagResolverFactory);
     return this;
   }
   
-  // Add the specified custom resolver to the formatter
-  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ComponentFactory<T> resolver)
+  // Add the specified custom component factory to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ComponentFactory<T> componentFactory)
   {
-    this.customResolvers.put(type, resolver);
+    this.customResolvers.put(type, componentFactory);
     return this;
   }
   
-  // Add the specified custom resolver to the formatter
-  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ContextualComponentFactory<T> resolver)
+  // Add the specified custom argument component factory to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, ArgumentComponentFactory<T> argumentComponentFactory)
   {
-    this.customResolvers.put(type, resolver);
+    this.customResolvers.put(type, argumentComponentFactory);
+    return this;
+  }
+  
+  // Add the specified custom string component factory to the formatter
+  public <T> MiniMessageFormatter registerCustomResolver(Class<T> type, StringComponentFactory<T> stringComponentFactory)
+  {
+    this.customResolvers.put(type, stringComponentFactory);
     return this;
   }
 
@@ -70,6 +78,8 @@ public class MiniMessageFormatter implements MessageFormatter
       return Placeholder.component(key, component);
     else if (value instanceof ComponentLike componentLike)
       return Placeholder.component(key, componentLike);
+    else if (value instanceof ArgumentComponentLike argumentComponentLike)
+      return TagResolver.resolver(key, (args, context) -> Tag.selfClosingInserting(argumentComponentLike.asComponent(args)));
     
     var customResolverType = this.customResolvers.keySet().stream()
       .filter(type -> type.isAssignableFrom(value.getClass()))

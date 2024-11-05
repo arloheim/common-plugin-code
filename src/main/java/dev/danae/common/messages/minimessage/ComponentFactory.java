@@ -8,7 +8,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 @FunctionalInterface
 public interface ComponentFactory<T> extends TagResolverFactory<T>
 {
-  // Create a tag resolver for the specified value and key
+  // Create a component for the specified value
   public Component create(T value);
 
 

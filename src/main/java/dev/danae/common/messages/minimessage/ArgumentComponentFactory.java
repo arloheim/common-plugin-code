@@ -7,15 +7,15 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 
 @FunctionalInterface
-public interface ContextualComponentFactory<T> extends TagResolverFactory<T>
+public interface ArgumentComponentFactory<T> extends TagResolverFactory<T>
 {
-  // Create a tag resolver for the specified value and key
-  public Component create(T value, ArgumentQueue args);
+  // Create a component for the specified value and arguments
+  public Component createComponent(T value, ArgumentQueue args);
 
 
   // Create a tag resolver for the specified value and key
   public default TagResolver create(T value, String key)
   {
-    return TagResolver.resolver(key, (args, context) -> Tag.selfClosingInserting(this.create(value, args)));
+    return TagResolver.resolver(key, (args, context) -> Tag.selfClosingInserting(this.createComponent(value, args)));
   }
 }
