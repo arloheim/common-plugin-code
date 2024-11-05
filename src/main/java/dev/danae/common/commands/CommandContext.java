@@ -227,10 +227,10 @@ public class CommandContext
     this.sender.sendMessage(message);
   }
   
-  // Send a string message to the sender of the command
-  public void sendMessage(String message)
+  // Send a plain message to the sender of the command
+  public void sendPlainMessage(String message)
   {
-    this.sender.sendMessage(message);
+    this.sender.sendPlainMessage(message);
   }
   
   // Send a rich message to the sender of the command
