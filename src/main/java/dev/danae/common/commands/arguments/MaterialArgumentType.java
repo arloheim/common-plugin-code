@@ -1,7 +1,7 @@
 package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.Suggestion;
 import java.util.stream.Stream;
+import dev.danae.common.commands.Suggestion;
 import org.bukkit.Material;
 
 

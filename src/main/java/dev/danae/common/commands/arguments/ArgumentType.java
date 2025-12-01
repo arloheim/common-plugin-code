@@ -1,10 +1,9 @@
 package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.CommandContext;
 import java.util.EnumSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import org.bukkit.Location;
+import dev.danae.common.commands.CommandContext;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

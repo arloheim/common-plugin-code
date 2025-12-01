@@ -1,8 +1,8 @@
 package dev.danae.common.messages.minimessage;
 
-import dev.danae.common.messages.MessageFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import dev.danae.common.messages.MessageFormatter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.MiniMessage;

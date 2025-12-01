@@ -1,7 +1,5 @@
 package dev.danae.common.commands.arguments;
 
-import com.google.common.reflect.TypeToken;
-import dev.danae.common.commands.Suggestion;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.regex.MatchResult;
@@ -9,6 +7,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import com.google.common.reflect.TypeToken;
+import dev.danae.common.commands.Suggestion;
 
 
 final class EnumSetArgumentType<E extends Enum<E>> implements PatternListArgumentType<E, EnumSet<E>>

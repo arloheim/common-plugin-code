@@ -1,7 +1,6 @@
 package dev.danae.common.messages;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import org.bukkit.configuration.ConfigurationSection;

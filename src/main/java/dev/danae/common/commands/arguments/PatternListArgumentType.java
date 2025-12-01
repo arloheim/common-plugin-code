@@ -1,11 +1,10 @@
 package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.Suggestion;
-import java.util.Arrays;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
+import dev.danae.common.commands.Suggestion;
 
 
 public interface PatternListArgumentType<T, C> extends StringListArgumentType<C>

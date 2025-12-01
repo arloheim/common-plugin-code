@@ -1,7 +1,8 @@
 package dev.danae.common.commands.arguments;
 
-import dev.danae.common.commands.CommandContext;
 import java.util.stream.Stream;
+import dev.danae.common.commands.CommandContext;
+
 
 public interface StringArgumentType<T> extends ArgumentType<T>
 {
