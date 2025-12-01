@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 final class LocationArgumentType implements ArgumentType<Location>
 {
   // The pattern for parsing a location
-  private static final Pattern LOCATION_PATTERN = Pattern.compile("((?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)) (?:(0|-?[1-9][0-9]*)|(~(-?[1-9][0-9]*)?)))|([a-zA-Z0-9_]{2,16})|(([@^])([a-z_][a-z0-9_]*))|(\\$([a-zA-Z0-9._-]+:[a-zA-Z0-9._\\/-]+))|(~)");
+  private static final Pattern LOCATION_PATTERN = Pattern.compile("(?:(?<num>(?:(?<x>0|-?[1-9][0-9]*)|(?<isrx>~(?<rx>-?[1-9][0-9]*)?)) (?:(?<y>0|-?[1-9][0-9]*)|(?<isry>~(?<ry>-?[1-9][0-9]*)?)) (?:(?<z>0|-?[1-9][0-9]*)|(?<isrz>~(?<rz>-?[1-9][0-9]*)?)))|(?<player>[a-zA-Z0-9_]{2,16})|(?<block>(?<mode>[@^])(?<mat>[a-z_][a-z0-9_]*))|(?<alias>[a-zA-Z0-9._-]+:[a-zA-Z0-9._\\/-]+)|(?<cur>~))");
   
 
   // The origin location for the argument type
@@ -118,7 +118,7 @@ final class LocationArgumentType implements ArgumentType<Location>
       if (this.allowedFormats.contains(LocationFormat.ALIAS))
       {
         suggestions = Stream.concat(suggestions, this.aliasArgumentType.suggest(context, argumentIndex)
-        .map(material -> String.format("$%s", material)));
+        .map(alias -> String.format("%s", alias)));
       }
     }
   
@@ -136,23 +136,23 @@ final class LocationArgumentType implements ArgumentType<Location>
       throw new ArgumentTypeMismatchException(this, input);
 
     // Check for a current location
-    if (this.allowedFormats.contains(LocationFormat.NUMERIC) && m.group(17) != null)
+    if (this.allowedFormats.contains(LocationFormat.NUMERIC) && m.group("cur") != null)
       return origin;
     
     // Check for a numeric location
-    if (this.allowedFormats.contains(LocationFormat.NUMERIC) && m.group(1) != null)
+    if (this.allowedFormats.contains(LocationFormat.NUMERIC) && m.group("num") != null)
     {
-      var x = m.group(3) != null ? origin.getBlockX() + (m.group(4) != null ? Integer.parseInt(m.group(4)) : 0) : Integer.parseInt(m.group(2));
-      var y = m.group(6) != null ? origin.getBlockY() + (m.group(7) != null ? Integer.parseInt(m.group(7)) : 0) : Integer.parseInt(m.group(5));
-      var z = m.group(9) != null ? origin.getBlockZ() + (m.group(10) != null ? Integer.parseInt(m.group(10)) : 0) : Integer.parseInt(m.group(8));
+      var x = m.group("isrx") != null ? origin.getBlockX() + (m.group("rx") != null ? Integer.parseInt(m.group("rx")) : 0) : Integer.parseInt(m.group("x"));
+      var y = m.group("isry") != null ? origin.getBlockY() + (m.group("ry") != null ? Integer.parseInt(m.group("ry")) : 0) : Integer.parseInt(m.group("y"));
+      var z = m.group("isrz") != null ? origin.getBlockZ() + (m.group("rz") != null ? Integer.parseInt(m.group("rz")) : 0) : Integer.parseInt(m.group("z"));
       
       return new Location(origin.getWorld(), x, y, z);
     }
 
     // Check for a player location
-    if (this.allowedFormats.contains(LocationFormat.PLAYER) && m.group(11) != null)
+    if (this.allowedFormats.contains(LocationFormat.PLAYER) && m.group("player") != null)
     {
-      var player = this.playerArgumentType.parseFromString(m.group(11));
+      var player = this.playerArgumentType.parseFromString(m.group("player"));
       if (player.getLocation().getWorld() != origin.getWorld())
         throw new LocationWorldMismatchException(player);
 
@@ -160,10 +160,10 @@ final class LocationArgumentType implements ArgumentType<Location>
     }
 
     // Check for a block location
-    if (this.allowedFormats.contains(LocationFormat.BLOCK) && m.group(12) != null)
+    if (this.allowedFormats.contains(LocationFormat.BLOCK) && m.group("block") != null)
     {      
-      var mode = m.group(13);
-      var material = this.blockArgumentType.parseFromString(m.group(14));
+      var mode = m.group("mode");
+      var material = this.blockArgumentType.parseFromString(m.group("mat"));
       
       // Find the block
       var block = Cuboid.around(origin, this.blockSearchRadius).findNearestBlockToCenter(material);
@@ -180,9 +180,9 @@ final class LocationArgumentType implements ArgumentType<Location>
     }
 
     // Check for an alias location
-    if (this.allowedFormats.contains(LocationFormat.ALIAS) && m.group(15) != null)
+    if (this.allowedFormats.contains(LocationFormat.ALIAS) && m.group("alias") != null)
     {
-      var key = this.aliasArgumentType.parseFromString(m.group(16));
+      var key = this.aliasArgumentType.parseFromString(m.group("alias"));
       var location = aliases.get(key);
       if (location == null)
         throw new LocationAliasNotFoundException(key);
